@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Futuristic 3D Terminal Box</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #000;
+        perspective: 1000px;
+        height: 100vh;
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+        font-family: "Roboto", sans-serif;
+      }
+
+      .terminal-container {
+        width: 300px;
+        height: 200px;
+        perspective: 800px;
+        margin-bottom: 20px;
+        position: relative;
+        left: 20px;
+        bottom: 20px;
+      }
+
+      .terminal-box {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transform: rotateX(20deg) rotateY(-45deg);
+        animation: float 4s infinite alternate-reverse;
+        transition: transform 0.5s ease-in-out;
+      }
+
+      .terminal-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #0e0e0e;
+        color: #00ff00;
+        font-size: 14px;
+        border: 1px solid #666;
+        box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out,
+          background-color 0.3s ease-in-out;
+      }
+
+      .terminal-face:nth-child(odd) {
+        background-color: #0a0a0a;
+      }
+
+      .terminal-face:hover {
+        transform: translateZ(30px);
+        box-shadow: 0 0 20px rgba(255, 165, 0, 1);
+        background-color: #ff8c00;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-10px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="terminal-container">
+      <div class="terminal-box">
+        <!-- JavaScript will populate this area -->
+      </div>
+    </div>
+
+    <script>
+      const terminalBox = document.querySelector(".terminal-box");
+      const numRows = 13;
+      const numCols = 13;
+
+      function createTerminalGrid() {
+        for (let i = 0; i < numRows; i++) {
+          for (let j = 0; j < numCols; j++) {
+            const cell = document.createElement("div");
+            cell.classList.add("terminal-face");
+            cell.textContent = `Output ${i},${j}`; // Added backticks for template literal
+            cell.style.transform = `translateZ(${Math.random() * 20}px)`; // Added backticks and string for translateZ
+            terminalBox.appendChild(cell);
+          }
+        }
+      }
+
+      createTerminalGrid();
+    </script>
+  </body>
+</html>

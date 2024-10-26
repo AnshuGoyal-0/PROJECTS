@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html {
+        background: #000;
+        color: #ddd;
+        font-family: sans-serif;
+        text-align: center;
+      }
+      p {
+        margin-top: 20px;
+      }
+      a {
+        color: #ddd;
+        display: inline-block;
+      }
+      #canvas-wrapper {
+        margin: 0 auto;
+        position: relative;
+        width: 500px;
+        height: 500px;
+      }
+      .hm {
+        position: absolute;
+        height: 50px;
+        width: 100%;
+        top: 20px;
+        z-index: 20;
+      }
+      canvas {
+        aspect-ratio: auto 500 / 500;
+        width: 500px;
+        height: 500px;
+        position: absolute;
+        top: 75%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="canvas-wrapper">
+      <canvas class="hm"></canvas>
+    </div>
+  </body>
+  <script>
+    const mcos = Math.cos,
+      msin = Math.sin,
+      PI = Math.PI,
+      Tau = PI * 2,
+      height = 500,
+      width = 500,
+      offsetX = width * 0.5,
+      offsetY = height * 0.5,
+      radius = Math.min(width, height) * 0.5;
+
+    // Pattern density
+    const numLines = 360;
+
+    // Control the speed of pattern change
+    const rateOfChange = 0.01;
+
+    // Speed at which rainbow rolls around the perimiter
+    const colourOffsetShift = 1;
+
+    let canvas,
+      ctx,
+      factor = 0,
+      colourFactor = 360 / numLines,
+      colourOffset = 1;
+
+    canvas = document.createElement("canvas");
+    document.querySelector("#canvas-wrapper").appendChild(canvas);
+    canvas.width = width;
+    canvas.height = height;
+    ctx = canvas.getContext("2d");
+
+    const map = (v, i1, i2, o1, o2) => {
+      return o1 + (o2 - o1) * ((v - i1) / (i2 - i1));
+    };
+
+    const getAngle = (i) => {
+      return map(i, 0, numLines, 0, Tau) - factor;
+    };
+
+    const getPoint = (angle) => {
+      return { x: radius * mcos(angle), y: radius * msin(angle) };
+    };
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < numLines; i++) {
+        let pt1 = getPoint(getAngle(i)),
+          pt2 = getPoint(getAngle((i * factor) % numLines));
+        ctx.strokeStyle = `hsla(200, 100%, ${map(
+          i,
+          0,
+          numLines,
+          20,
+          80
+        )}%,${map(Math.sin(factor), -1, 1, 0.2, 0.8)})`; // Pulsating effect
+        ctx.beginPath();
+        ctx.moveTo(offsetX + pt1.x, offsetY + pt1.y);
+        ctx.lineTo(offsetX + pt2.x, offsetY + pt2.y);
+        ctx.stroke();
+      }
+    }
+
+    function animate() {
+      draw();
+      factor += rateOfChange;
+      colourOffset += colourOffsetShift;
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+  </script>
+</html>
